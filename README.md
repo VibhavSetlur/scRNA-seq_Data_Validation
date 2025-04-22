@@ -151,66 +151,66 @@ The processed Seurat object, containing all the results from the pipeline steps 
 ## Output Files
 All output files are saved in the directory specified by the --working_dir argument. The filenames are prefixed with the --project_name.
 
-[project_name]_QC_VlnPlots_PreFilter_Combined.png: Static combined VlnPlots showing distributions of nFeature_RNA, nCount_RNA, and percent.mt before any filtering. Includes summary statistics in subtitles.
+- [project_name]_QC_VlnPlots_PreFilter_Combined.png: Static combined VlnPlots showing distributions of nFeature_RNA, nCount_RNA, and percent.mt before any filtering. Includes summary statistics in subtitles.
 [put name of QC_VlnPlots_PreFilter_Combined.png image here]
 
-[project_name]_QC_FeatureScatter_PreFilter_Combined.png: Static combined FeatureScatter plots showing nCount_RNA vs nFeature_RNA and nCount_RNA vs percent.mt before filtering, with log10 scale on the x-axis.
+- [project_name]_QC_FeatureScatter_PreFilter_Combined.png: Static combined FeatureScatter plots showing nCount_RNA vs nFeature_RNA and nCount_RNA vs percent.mt before filtering, with log10 scale on the x-axis.
 [put name of QC_FeatureScatter_PreFilter_Combined.png image here]
 
-[project_name]_QC_UMI_Histogram_PreFilter.png: Static histogram showing the distribution of UMI counts per cell before filtering. Includes summary statistics in the subtitle.
+- [project_name]_QC_UMI_Histogram_PreFilter.png: Static histogram showing the distribution of UMI counts per cell before filtering. Includes summary statistics in the subtitle.
 [put name of QC_UMI_Histogram_PreFilter.png image here]
 
-[project_name]_QC_VlnPlots_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined VlnPlots showing distributions after filtering. Includes summary statistics and filter information in subtitles.
+- [project_name]_QC_VlnPlots_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined VlnPlots showing distributions after filtering. Includes summary statistics and filter information in subtitles.
 [put name of QC_VlnPlots_PostFilter_Combined.png image here]
 
-[project_name]_QC_FeatureScatter_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined FeatureScatter plots after filtering, with log10 scale on the x-axis and filter information in subtitles.
+- [project_name]_QC_FeatureScatter_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined FeatureScatter plots after filtering, with log10 scale on the x-axis and filter information in subtitles.
 [put name of QC_FeatureScatter_PostFilter_Combined.png image here]
 
-[project_name]_QC_UMI_Histogram_PostFilter.png: (Generated only if H5 input was used and cells remain after filtering) Static histogram showing the distribution of UMI counts per cell after filtering. Includes summary statistics and filter information in the subtitle.
+- [project_name]_QC_UMI_Histogram_PostFilter.png: (Generated only if H5 input was used and cells remain after filtering) Static histogram showing the distribution of UMI counts per cell after filtering. Includes summary statistics and filter information in the subtitle.
 [put name of QC_UMI_Histogram_PostFilter.png image here]
 
-[project_name]_QC_cells_summary.png: Bar plot visualizing the total number of cells before and after all filtering steps (SouporCell and/or min_features/counts if applicable).
+- [project_name]_QC_cells_summary.png: Bar plot visualizing the total number of cells before and after all filtering steps (SouporCell and/or min_features/counts if applicable).
 [put name of QC_cells_summary.png image here]
 
-[project_name]_QC_reads_summary.png: Bar plot visualizing the total number of reads (UMI counts) before and after all filtering steps.
+- [project_name]_QC_reads_summary.png: Bar plot visualizing the total number of reads (UMI counts) before and after all filtering steps.
 [put name of QC_reads_summary.png image here]
 
-[project_name]_Variable_Features.html: An interactive HTML plot of the identified highly variable features. You can open this file in a web browser to hover over points and see the gene names.
+- [project_name]_Variable_Features.html: An interactive HTML plot of the identified highly variable features. You can open this file in a web browser to hover over points and see the gene names.
 [put name of Variable_Features.html preview image here]
 
-[project_name]_PCA.1.png: Combined static plot showing the PCA cell embedding colored by cluster and an Elbow plot to assess PC significance.
+- [project_name]_PCA.1.png: Combined static plot showing the PCA cell embedding colored by cluster and an Elbow plot to assess PC significance.
 [put name of PCA.1.png image here]
 
-[project_name]_PCA.2.png: Static heatmap showing the expression of the top genes contributing to the first few principal components.
+- [project_name]_PCA.2.png: Static heatmap showing the expression of the top genes contributing to the first few principal components.
 [put name of PCA.2.png image here]
 
-[project_name]_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the cell-cell nearest neighbor graph constructed by FindNeighbors().
+- [project_name]_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the cell-cell nearest neighbor graph constructed by FindNeighbors().
 
-[project_name]_shared_nearest_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the Shared Nearest Neighbor (SNN) graph.
+- [project_name]_shared_nearest_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the Shared Nearest Neighbor (SNN) graph.
 
-[project_name]_UMAP.png: Static UMAP plot visualizing the cell embedding in 2D, colored and labeled by the identified clusters.
+- [project_name]_UMAP.png: Static UMAP plot visualizing the cell embedding in 2D, colored and labeled by the identified clusters.
 [put name of UMAP.png image here]
 
-[project_name]_markers_res[resolution]_alg[algorithm].csv: (Generated only if --find_markers TRUE) A CSV file containing the table of differentially expressed genes for each cluster. The filename includes the clustering resolution and algorithm used.
+- [project_name]_markers_res[resolution]_alg[algorithm].csv: (Generated only if --find_markers TRUE) A CSV file containing the table of differentially expressed genes for each cluster. The filename includes the clustering resolution and algorithm used.
 [put name of markers.csv preview image here]
 
-[project_name]_processed.rds: The final processed Seurat object, saved as an RDS file. This object contains all the data and analysis results and can be loaded into R or RStudio for further interactive exploration.
+- [project_name]_processed.rds: The final processed Seurat object, saved as an RDS file. This object contains all the data and analysis results and can be loaded into R or RStudio for further interactive exploration.
 
-Doublet Filtering with SouporCell Explained
+### Doublet Filtering with SouporCell Explained
 The --soupor_cell_doublet_input argument allows you to leverage the results of SouporCell for doublet removal. SouporCell is a tool that analyzes genetic variation (specifically, variants in the reads mapped to each cell) to identify potential doublets resulting from loading multiple cells into a single droplet. Its clusters.tsv output file provides a classification for each cell barcode, typically assigning a 'status' of 'singlet', 'doublet', or 'unclassified'.
 
 When you provide the path to this file using the --soupor_cell_doublet_input argument, the script reads the file and extracts the 'barcode' and 'status' columns. It then subsets the Seurat object to keep only the cell barcodes that SouporCell identified as 'singlet' or 'unclassified'. Cells explicitly labeled with the 'doublet' status are removed from the analysis. The script includes checks to ensure the SouporCell file exists and has the expected 'barcode' column to prevent errors.
 
 Note on 'Unclassified' Cells: The script includes 'unclassified' cells by default based on your code. These cells have ambiguous SouporCell classifications and may represent technical artifacts or true singlets that couldn't be confidently assigned. Depending on your specific dataset characteristics and confidence in the SouporCell results, you might choose to filter these out manually after the pipeline runs, or modify the script to exclude them if a stricter filtering is desired.
 
-Optional Marker Finding
+### Optional Marker Finding
 The --find_markers argument is a boolean flag (TRUE or FALSE) that controls whether the FindAllMarkers function is executed. This function performs differential gene expression analysis to identify genes that are significantly upregulated in each identified cell cluster compared to all other cells.
 
 When --find_markers is TRUE, the script runs FindAllMarkers using the 'DESeq2' test, a method commonly used for differential expression analysis. The script uses a log2 fold-change threshold of 0.25, requires a minimum of 10% of cells in either of the two groups to express the gene (min.pct = 0.1), and uses a p-value adjusted threshold of 0.05 (return.thresh = 0.05).
 
 Important Consideration for test.use='DESeq2': While 'DESeq2' is a powerful statistical framework, it is primarily designed for bulk RNA-seq experiments with biological replicates within each condition. While it can be applied to single-cell data, it is less appropriate for clusters with very low cell counts (ideally requires at least 2 replicates/cells per group). Seurat's default test, 'wilcox' (Wilcoxon Rank Sum test), or the 'negbinom' test are often considered more statistically robust and widely used for single-cell differential expression analysis, particularly when dealing with clusters that have very few cells. The script includes a warning if the minimum cluster size is less than 2. If you are working with small or rare cell populations, or prefer a different statistical approach, you might consider performing marker finding interactively in R/RStudio after loading the processed Seurat object, or modifying the script to use a different test.use method.
 
-Working Directory
+### Working Directory
 It is strongly recommended to use the --working_dir argument to specify a dedicated output directory for each sample or analysis run. This helps keep your project files organized and prevents output files from different runs from overwriting each other. The script will create the directory if it doesn't exist. Ensure the user running the script has write permissions to this directory.
 
 ## Tips and Best Practices
