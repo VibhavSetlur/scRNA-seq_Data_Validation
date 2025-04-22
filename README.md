@@ -58,20 +58,20 @@ The script is executed from the command line. Navigate to the directory where yo
 ./seurat_pipeline.R -h
 ```
 
---rds_input CHARACTER Path to an existing Seurat object saved as an RDS file. Use this if you are resuming a pipeline or starting with pre-processed data. (Either this or --h5_input is required)
---h5_input CHARACTER Path to a raw 10X Genomics filtered feature-barcode matrix in H5 format (e.g., filtered_feature_bc_matrix.h5 from Cell Ranger). Use this for initial processing from raw data. (Either this or --h5_input is required)
---project_name CHARACTER A name for your project. This name will be used in plot titles and as a prefix for all output files. (Default: SeuratProject)
---soupor_cell_doublet_input CHARACTER Path to a SouporCell clusters.tsv file for doublet filtering. If provided, the script will filter out cells classified as 'doublet'. (Optional)
---min_features INTEGER Minimum number of genes detected in a cell. Cells with fewer features will be removed during QC if --h5_input is used. (Default: 200)
---min_counts INTEGER Minimum number of total UMI counts per cell. Cells with fewer counts will be removed during QC if --h5_input is used. (Default: 1000)
---n_variable_features INTEGER The number of top variable features to identify and use for downstream steps like PCA and scaling. (Default: 2000)
---normalization_method {LogNormalize,RC,CLR} Specifies the normalization method to apply. LogNormalize: Log-normalization by total library size. RC: Relative counts (counts divided by total counts). CLR: Centered log-ratio transformation. (Default: CLR)
---scaling_method {negbinom,linear} Specifies the statistical model used when scaling data. 'negbinom' is recommended for UMI data to better account for variance. (Default: negbinom)
---pca_dimensions INTEGER The number of principal components to compute and retain for downstream analysis (e.g., FindNeighbors, RunUMAP). (Default: 15)
---clustering_resolution DOUBLE A parameter influencing the granularity of clustering. Higher values typically result in more clusters. Experimentation is often needed to find an appropriate value for your dataset. (Default: 0.5)
---clustering_algorithm {louvain,multilevel,leiden,slm} The algorithm used for graph-based clustering. louvain / multilevel: Standard Louvain algorithm. leiden: Leiden algorithm, generally recommended for larger datasets as it tends to produce more connected partitions. slm: SLM (Sequential Louvain Method). (Default: leiden)
---working_dir CHARACTER The absolute or relative path to the directory where all output files will be saved. It is highly recommended to specify a dedicated directory for each run or sample. (Default: . - the current directory)
---find_markers LOGICAL A boolean flag (TRUE or FALSE) to determine whether to run the FindAllMarkers step to identify genes differentially expressed in each cluster. Finding markers can be computationally intensive. (Default: TRUE)
+- --rds_input CHARACTER Path to an existing Seurat object saved as an RDS file. Use this if you are resuming a pipeline or starting with pre-processed data. (Either this or --h5_input is required)
+- --h5_input CHARACTER Path to a raw 10X Genomics filtered feature-barcode matrix in H5 format (e.g., filtered_feature_bc_matrix.h5 from Cell Ranger). Use this for initial processing from raw data. (Either this or --h5_input is required)
+- --project_name CHARACTER A name for your project. This name will be used in plot titles and as a prefix for all output files. (Default: SeuratProject)
+- --soupor_cell_doublet_input CHARACTER Path to a SouporCell clusters.tsv file for doublet filtering. If provided, the script will filter out cells classified as 'doublet'. (Optional)
+- --min_features INTEGER Minimum number of genes detected in a cell. Cells with fewer features will be removed during QC if --h5_input is used. (Default: 200)
+- --min_counts INTEGER Minimum number of total UMI counts per cell. Cells with fewer counts will be removed during QC if --h5_input is used. (Default: 1000)
+- --n_variable_features INTEGER The number of top variable features to identify and use for downstream steps like PCA and scaling. (Default: 2000)
+- --normalization_method {LogNormalize,RC,CLR} Specifies the normalization method to apply. LogNormalize: Log-normalization by total library size. RC: Relative counts (counts divided by total counts). CLR: Centered log-ratio transformation. - (Default: CLR)
+- --scaling_method {negbinom,linear} Specifies the statistical model used when scaling data. 'negbinom' is recommended for UMI data to better account for variance. (Default: negbinom)
+- --pca_dimensions INTEGER The number of principal components to compute and retain for downstream analysis (e.g., FindNeighbors, RunUMAP). (Default: 15)
+- --clustering_resolution DOUBLE A parameter influencing the granularity of clustering. Higher values typically result in more clusters. Experimentation is often needed to find an appropriate value for your dataset. (Default: 0.5)
+- --clustering_algorithm {louvain,multilevel,leiden,slm} The algorithm used for graph-based clustering. louvain / multilevel: Standard Louvain algorithm. leiden: Leiden algorithm, generally recommended for larger datasets as it tends to produce more connected partitions. slm: SLM (Sequential Louvain Method). (Default: leiden)
+- --working_dir CHARACTER The absolute or relative path to the directory where all output files will be saved. It is highly recommended to specify a dedicated directory for each run or sample. (Default: . - the current directory)
+- --find_markers LOGICAL A boolean flag (TRUE or FALSE) to determine whether to run the FindAllMarkers step to identify genes differentially expressed in each cluster. Finding markers can be computationally intensive. (Default: TRUE)
 
 
 ## Example Commands
