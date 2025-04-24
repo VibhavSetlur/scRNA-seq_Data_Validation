@@ -29,17 +29,15 @@ Single-cell RNA sequencing data is high-dimensional and inherently noisy. Analyz
 
 ## Prerequisites
 
-This script requires R and several R packages. Ensure R is installed on your system. The script includes a section at the beginning to check for and automatically install the necessary R packages if they are not already present. Ensure your R environment has access to the internet during the initial run if installations are needed.
+This script requires R (4.3.1) and several R packages. Ensure R is installed on your system. The script includes a section at the beginning to check for and automatically install the necessary R packages if they are not already present. Ensure your R environment has access to the internet during the initial run if installations are needed.
 
 The required packages are:
-* `Seurat`
-* `tidyverse`
-* `patchwork`
-* `argparse`
-* `plotly`
-* `htmlwidgets`
-* `scales`
-* `ggrepel`
+* `Seurat` (>= 5.2.1)
+* `tidyverse` (>= 2.0.0)
+* `patchwork` (>= 1.3.0)
+* `argparse` (>= 2.2.5)
+* `scales` (>= 1.3.0)
+* `ggrepel` (>= 0.9.6)
 
 ## Installation
 
