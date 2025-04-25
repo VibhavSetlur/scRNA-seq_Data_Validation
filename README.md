@@ -94,7 +94,7 @@ The script is executed from the command line. Navigate to the directory where yo
 ./seurat_pipeline.R --rds_input /path/to/your/seurat_object.rds --project_name ProcessedData --find_markers FALSE --working_dir /path/to/output/directory
 ```
 
-4. Run multiple samples in one run (pre-existing folders must exist):
+4. Run multiple samples in one run:
 ```bash
 #!/bin/bash
 
