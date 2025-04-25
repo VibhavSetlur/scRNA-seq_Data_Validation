@@ -7,7 +7,7 @@
 #              via command-line arguments.
 
 # Check if necessary libraries are installed and install them if not
-list_of_packages = c("Seurat", "tidyverse", "patchwork", "argparse", "plotly", "htmlwidgets", "scales", "ggrepel")
+list_of_packages = c("Seurat", "tidyverse", "patchwork", "argparse", "scales", "ggrepel")
 
 cat("Checking and installing necessary packages...\n")
 for (package_name in list_of_packages) {
@@ -29,8 +29,6 @@ library(Seurat)
 library(tidyverse)
 library(patchwork)
 library(argparse)
-library(plotly)
-library(htmlwidgets)
 library(scales)
 library(ggrepel)
 
@@ -112,8 +110,18 @@ parser$add_argument('--find_markers',
 
 args = parser$parse_args()
 
+
 # Set working directory
-setwd(args$working_dir)
+output_dir <- paste0(args$working_dir, '/', args$project_name, '_outputs/')
+
+# Check if the output directory exists, and create it if it doesn't
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# Set the working directory
+setwd(output_dir)
+
 
 # Load data
 seurat_object = NULL
@@ -239,7 +247,7 @@ if (!is.null(seurat_object)) {
   umi_pre_text <- paste0("Min: ", umi_pre_stats$min, ", Median: ", round(umi_pre_stats$median, 1), ", Max: ", umi_pre_stats$max)
   
   p3 = ggplot(p3_data, aes(x = UMI)) +
-    geom_histogram(fill = '#4A76A8', color = 'black', binwidth = 500) + # Changed fill color
+    geom_histogram(fill = '#4A76A8', color = 'dodgerblue', binwidth = 500) + # Changed fill color
     scale_x_continuous(labels = scales::unit_format(unit = "k", scale = 1e-3)) + # Keep linear scale with unit format
     scale_y_continuous(labels = scales::unit_format(unit = "k", scale = 1e-3)) +
     labs(title = paste0(args$project_name, ' - UMI Counts per Cell Distribution (Pre-filter)'),
@@ -250,9 +258,6 @@ if (!is.null(seurat_object)) {
     theme(plot.title = element_text(hjust = 0.5, size = 14),
           plot.subtitle = element_text(hjust = 0.5, size = 10))
   
-  # Save Pre-filter Histogram
-  ggsave(filename = paste0(args$project_name, '_QC_UMI_Histogram_PreFilter.png'), plot = p3, width = 7, height = 6, units = 'in', dpi = 300)
-  cat('QC Histogram (Pre-filter, static) saved.\n')
   
   # Filter for doublets if souporcell input is provided
   if (!is.null(args$soupor_cell_doublet_input) && file.exists(args$soupor_cell_doublet_input)) {
@@ -263,7 +268,7 @@ if (!is.null(seurat_object)) {
     # Get barcodes of non-doublet cells
     if ("barcode" %in% colnames(clusters)) {
       non_doublets <- clusters %>%
-        filter(status != 'doublet')
+        filter(status == 'singlet')
       
       valid_non_doublets <- intersect(non_doublets$barcode, colnames(seurat_object))
       
@@ -390,7 +395,7 @@ if (!is.null(seurat_object)) {
       umi_post_text <- paste0("Min: ", umi_post_stats$min, ", Median: ", round(umi_post_stats$median, 1), ", Max: ", umi_post_stats$max)
       
       p4 = ggplot(p4_data, aes(x = UMI)) +
-        geom_histogram(fill = '#356135', color = 'black', binwidth = 500) + # Changed fill color
+        geom_histogram(fill = '#356135', color = 'dodgerblue', binwidth = 500) + # Changed fill color
         scale_x_continuous(labels = scales::unit_format(unit = "k", scale = 1e-3)) + # Keep linear scale with unit format
         scale_y_continuous(labels = scales::unit_format(unit = "k", scale = 1e-3)) +
         labs(title = paste0(args$project_name, ' - UMI Counts per Cell Distribution (Post-filter)'),
@@ -401,9 +406,14 @@ if (!is.null(seurat_object)) {
         theme(plot.title = element_text(hjust = 0.5, size = 14),
               plot.subtitle = element_text(hjust = 0.5, size = 10)) # Center title and subtitle
       
+      # Combined Histogram
+      combined_histogram = (p3 | p4) +
+        plot_annotation(title = paste0(args$project_name, ' - QC UMI Histogram Distribution'), 
+                        theme = theme(plot.title = element_text(hjust = 0.5, size = 16))) # Add overall title
+      
       # Save Post-filter Histogram
-      ggsave(filename = paste0(args$project_name, '_QC_UMI_Histogram_PostFilter.png'), plot = p4, width = 7, height = 6, units = 'in', dpi = 300)
-      cat('QC Histogram (Post-filter, static) saved.\n')
+      ggsave(filename = paste0(args$project_name, '_QC_UMI_Histogram.png'), plot = combined_histogram, width = 12, height = 8, units = 'in', dpi = 300)
+      cat('QC Histogram saved.\n')
     } else {
       cat("Warning: No cells remaining after filtering by min_features and min_counts. Skipping post-filter QC plot generation.\n")
     }
@@ -459,6 +469,11 @@ if (!is.null(seurat_object)) {
   ggsave(filename = paste0(args$project_name, '_QC_reads_summary.png'), plot = read_number_plot, width = 7, height = 6, units = 'in', dpi = 300)
   cat('QC count summary bar plots (static) saved.\n')
   
+  # Save the Seurat object
+  cat('Saving filtered Seurat object...\n')
+  saveRDS(seurat_object, file = paste0(args$project_name, '_filtered.rds'))
+  cat('Seurat object saving complete.\n')
+  
 }
 
 
@@ -507,67 +522,73 @@ if (!is.null(seurat_object) && ncol(seurat_object) > 0) {
                                          nfeatures = nfeatures)
     cat("FindVariableFeatures complete.\n")
     
-    top_variable_features = head(VariableFeatures(seurat_object), 10)
-    
-    cat('Generating Variable Feature Plot (Interactive)...\n')
-    # Variable Feature Plot (Interactive with Hover)
-    # Create the base ggplot object
-    p5_static <- tryCatch({
-      VariableFeaturePlot(object = seurat_object) +
-        theme_classic() +
-        labs(title = paste0(args$project_name, ' - Variable Features (Top ', length(VariableFeatures(seurat_object)), ')'), # Use actual number of variable features found
-             x = 'Average Expression',
-             y = 'Variance (vst)') +
-        theme(plot.title = element_text(hjust = 0.5, size = 14))
-    }, error = function(e) {
-      cat(paste0("Error generating static Variable Feature Plot: ", e$message, "\n"))
-      return(NULL) # Return NULL if plotting fails
-    })
-    
-    
-    # Add static labels for the top 10 features using LabelPoints and ggrepel
-    if (!is.null(p5_static) && length(top_variable_features) > 0) {
-      tryCatch({
-        # Add labels using LabelPoints
-        p5_static <- LabelPoints(
-          plot = p5_static,
-          points = top_variable_features,
-          repel = TRUE
-        )
-      }, error = function(e) {
-        cat(paste0("Error adding labels to static Variable Feature Plot: ", e$message, "\n"))
-      })
+    # Check if variable features were actually found before proceeding with plotting
+    if (length(VariableFeatures(seurat_object)) == 0) {
+      cat("Error: No variable features found in the Seurat object after FindVariableFeatures. Skipping Variable Feature Plotting.\n")
     } else {
-      cat("Warning: No variable features were found. Cannot add labels to Variable Feature Plot.\n")
-    }
-    
-    
-    
-    # Convert the static plot to interactive plotly object with gene name tooltip
-    if (!is.null(p5_static)) {
-      cat('Generating Interactive Variable Feature Plot (Plotly)...\n')
-      p5_interactive <- tryCatch({
-        ggplotly(p5_static, tooltip = c("name", "x", "y")) %>%
-          layout(title = paste0(args$project_name, ' - Variable Features (Top ', length(VariableFeatures(seurat_object)), ')'))
+      # Get the top 20 variable features, or fewer if less than 20 exist
+      num_features_to_label <- min(20, length(VariableFeatures(seurat_object)))
+      top_variable_features <- head(VariableFeatures(seurat_object), num_features_to_label)
+      
+      cat('Generating Static Variable Feature Plot...\n')
+      
+      # Create the base ggplot object
+      p5_static <- tryCatch({
+        VariableFeaturePlot(object = seurat_object) +
+          theme_classic() +
+          labs(title = paste0(args$project_name, ' - Variable Features (Top ', num_features_to_label, ' Labeled)'), # Indicate how many are labeled
+               x = 'Average Expression',
+               y = 'Variance (vst)') +
+          theme(plot.title = element_text(hjust = 0.5, size = 14)) # Center and size the title
       }, error = function(e) {
-        cat(paste0("Error converting Variable Feature Plot to interactive Plotly: ", e$message, "\n"))
-        return(NULL) # Return NULL if plotly conversion fails
+        cat(paste0("Error generating static Variable Feature Plot: ", e$message, "\n"))
+        return(NULL) # Return NULL if plotting fails
       })
       
-      # Save interactive Variable Features plot as HTML
-      if (!is.null(p5_interactive)) {
-        saveWidget(p5_interactive,
-                   file = paste0(args$project_name, '_Variable_Features.html'),
-                   selfcontained = TRUE)
-        cat('Variable Feature Plot (interactive HTML) saved.\n')
+      # Add static labels for the top N features using LabelPoints and ggrepel
+      if (!is.null(p5_static) && length(top_variable_features) > 0) {
+        cat(paste0('Adding labels for the top ', length(top_variable_features), ' variable features...\n'))
+        p5_static_labeled <- tryCatch({
+          # Add labels using LabelPoints
+          LabelPoints(
+            plot = p5_static,
+            points = top_variable_features,
+            repel = TRUE, # Use ggrepel for non-overlapping labels
+            size = 3 # Adjust label size if needed
+          )
+        }, error = function(e) {
+          cat(paste0("Error adding labels to static Variable Feature Plot: ", e$message, "\n"))
+          # If labeling fails, return the plot without labels
+          return(p5_static)
+        })
       } else {
-        cat('Skipping saving interactive Variable Feature Plot due to previous error.\n')
+        cat("Warning: No variable features were found or plot generation failed. Cannot add labels to Variable Feature Plot.\n")
+        p5_static_labeled <- p5_static # Use the base plot if labeling is skipped
       }
-    } else {
-      cat('Skipping generation and saving of Variable Feature Plot due to previous error.\n')
-    }
-    
-  }
+      
+      # Save the static Variable Features plot as a larger PNG
+      if (!is.null(p5_static_labeled)) {
+        cat('Saving Variable Feature Plot as PNG...\n')
+        tryCatch({
+          ggsave(
+            filename = paste0(args$project_name, '_Variable_Features.png'),
+            plot = p5_static_labeled,
+            device = 'png',
+            width = 10, # Specify width in inches
+            height = 8, # Specify height in inches
+            dpi = 300 # Specify resolution
+          )
+          cat('Variable Feature Plot (PNG) saved.\n')
+        }, error = function(e) {
+          cat(paste0("Error saving Variable Feature Plot as PNG: ", e$message, "\n"))
+        })
+      } else {
+        cat('Skipping saving Variable Feature Plot due to previous error.\n')
+      }
+    } 
+  } 
+  
+  
   
   
   #---------------------------------------------------------------------------------------
