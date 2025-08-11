@@ -1,212 +1,484 @@
-# Comprehensive Seurat Single-Cell RNA-seq Pipeline
+# snRNA-seq Pipeline
 
-## Description
+A comprehensive single-nucleus RNA sequencing analysis pipeline built with Seurat, featuring both a web-based Shiny interface and command-line tools for flexible deployment and execution.
 
-This script offers a robust and customizable command-line solution for processing single-nucleus RNA sequencing (snRNA-seq) data using the powerful Seurat R package. Designed for both raw 10X Genomics H5 data and existing Seurat objects, it guides users through essential analysis steps including rigorous quality control (QC), data normalization and scaling, dimensionality reduction (PCA), graph-based clustering, UMAP visualization, and optional differential gene expression (DEG) analysis for cluster marker identification. A key feature is the integrated support for doublet removal using output from the SouporCell tool. The pipeline is built for ease of use in computational environments and supports batch processing workflows.
+## Features
 
-## Prerequisites
+- **Multi-Sample Analysis**: Process multiple samples simultaneously with parallel processing
+- **Sample-Specific Configurations**: Customize parameters for individual samples
+- **Parallel Processing**: Efficient multi-core processing for faster analysis
+- **Web Interface**: User-friendly Shiny application for interactive analysis
+- **Command Line**: Terminal interface for batch processing and server deployment
+- **Containerized**: Docker support for easy deployment and scaling
+- **Scalable**: Designed for both local development and production server deployment
+- **Flexible Input**: Supports both H5 files (10X Genomics) and RDS files (Seurat objects)
+- **Quality Control**: Comprehensive QC filtering with customizable parameters
+- **Advanced Analysis**: Clustering, dimensionality reduction, and marker identification
+- **Visualization**: Automated generation of publication-ready plots and sample comparisons
 
-This script requires R (4.3.1) and several R packages. Ensure R is installed on your system. The script includes a section at the beginning to check for and automatically install the necessary R packages if they are not already present. Ensure your R environment has access to the internet during the initial run if installations are needed.
+## Project Structure
 
-The required packages are:
-* `Seurat` (>= 5.2.1)
-* `tidyverse` (>= 2.0.0)
-* `patchwork` (>= 1.3.0)
-* `argparse` (>= 2.2.5)
-* `scales` (>= 1.3.0)
-* `ggrepel` (>= 0.9.6)
+```
+snRNA-seq-Pipeline/
+├── launch.sh                    # Main launcher script
+├── README.md                    # This file
+├── LICENSE                      # License information
+├── requirements.txt             # R package dependencies
+├── .gitignore                   # Git ignore rules
+├── docker-compose.yml           # Docker services configuration
+├── Dockerfile                   # Container build configuration
+├── scripts/                     # All executable scripts
+│   ├── run_shiny_app.R         # Shiny app launcher
+│   ├── run_pipeline_terminal.R  # Command-line interface
+│   ├── seurat_pipeline.R        # Original pipeline script
+│   ├── deployment/              # Deployment scripts
+│   │   ├── deploy.sh           # Docker deployment
+│   │   ├── launch_app.sh       # Shiny app launcher
+│   │   ├── quick_start.sh      # Setup script
+│   │   └── nginx.conf          # NGINX configuration
+│   └── utils/                   # Utility scripts
+│       └── test_shiny.R        # Testing utilities
+├── src/                         # Source code
+│   ├── core/                    # Core pipeline modules
+│   ├── utils/                   # Utility functions
+│   └── visualization/           # Plotting functions
+├── shiny_app/                   # Shiny web application
+│   ├── app.R                   # Main Shiny app
+│   ├── css/                    # Styling
+│   ├── js/                     # JavaScript
+│   ├── www/                    # Web assets
+│   └── docs/                   # App documentation
+├── docs/                        # Documentation
+│   ├── user_guides/            # User guides
+│   │   ├── SHINY_APP_GUIDE.md  # Shiny app guide
+│   │   └── DEPLOYMENT_GUIDE.md # Deployment guide
+│   ├── vignettes/              # Tutorials
+│   └── api/                    # API documentation
+├── config/                      # Configuration files
+├── data/                        # Data directory
+├── results/                     # Output directory
+├── logs/                        # Log files
+└── temp/                        # Temporary files
+```
 
-## Installation
+## Quick Start
 
-1.  Save the R script code (provided separately in a file named `seurat_pipeline.R`) into a text file.
-2.  Make the script executable in your terminal:
+### 🚀 One-Command Setup (Recommended)
 
-    ```bash
-    chmod +x seurat_pipeline.R
-    ```
+```bash
+# Clone and setup in one go
+git clone <repository-url>
+cd snRNA-seq-Pipeline
+./launch.sh setup
+
+# Launch the Shiny app (opens in browser automatically)
+./launch.sh shiny
+```
+
+### 🎯 Super Quick Start
+
+If you just want to see the app immediately:
+
+```bash
+# Setup and launch in one go
+git clone <repository-url>
+cd snRNA-seq-Pipeline
+./launch.sh setup && ./launch.sh shiny
+```
+
+### Option 1: Docker Deployment
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd snRNA-seq-Pipeline
+   ```
+
+2. **Deploy using the automated script**:
+   ```bash
+   ./launch.sh deploy
+   ```
+
+3. **Access the application**:
+   - Web interface: http://localhost:3838
+   - Terminal interface: Use `./launch.sh terminal` to see available commands
+
+### Option 2: Local Installation
+
+1. **Run the quick setup**:
+   ```bash
+   ./launch.sh setup
+   ```
+
+2. **Start the Shiny app**:
+   ```bash
+   ./launch.sh shiny
+   ```
+
+3. **Or run terminal pipeline**:
+   ```bash
+   ./launch.sh terminal
+   ```
+
+## Deployment Options
+
+### Development Mode
+```bash
+./launch.sh deploy
+```
+
+### Production Mode
+```bash
+./launch.sh deploy
+```
+
+### Custom Port
+```bash
+# Use environment variable for custom port
+SHINY_PORT=8080 ./launch.sh deploy
+```
 
 ## Usage
 
-The script is executed from the command line. Navigate to the directory where you saved the script in your terminal. Use the `-h` or `--help` flag to display a detailed help message with all arguments and their descriptions:
+### Web Interface
 
+1. **Data Input**: Upload your H5 or RDS files
+2. **Configure Parameters**: Set QC, processing, and clustering parameters
+3. **Run Analysis**: Execute the pipeline with one click
+4. **View Results**: Explore plots, tables, and downloadable files
+
+### Command Line Interface
+
+#### Basic Usage
 ```bash
-./seurat_pipeline.R -h
+# Run with H5 file
+Rscript scripts/run_pipeline_terminal.R --h5_input data/sample.h5 --project_name MyProject
+
+# Run with RDS file
+Rscript scripts/run_pipeline_terminal.R --rds_input data/sample.rds --project_name MyProject
+
+# Run with custom parameters
+Rscript scripts/run_pipeline_terminal.R \
+  --h5_input data/sample.h5 \
+  --project_name MyProject \
+  --min_features 300 \
+  --n_variable_features 3000 \
+  --clustering_resolution 0.8 \
+  --find_markers \
+  --verbose
 ```
 
-- --rds_input CHARACTER Path to an existing Seurat object saved as an RDS file. Use this if you are resuming a pipeline or starting with pre-processed data. (Either this or --h5_input is required)
-- --h5_input CHARACTER Path to a raw 10X Genomics filtered feature-barcode matrix in H5 format (e.g., filtered_feature_bc_matrix.h5 from Cell Ranger). Use this for initial processing from raw data. (Either this or --h5_input is required)
-- --project_name CHARACTER A name for your project. This name will be used in plot titles and as a prefix for all output files. (Default: SeuratProject)
-- --soupor_cell_doublet_input CHARACTER Path to a SouporCell clusters.tsv file for doublet filtering. If provided, the script will filter out cells classified as 'doublet'. (Optional)
-- --min_features INTEGER Minimum number of genes detected in a cell. Cells with fewer features will be removed during QC if --h5_input is used. (Default: 200)
-- --min_counts INTEGER Minimum number of total UMI counts per cell. Cells with fewer counts will be removed during QC if --h5_input is used. (Default: 1000)
-- --n_variable_features INTEGER The number of top variable features to identify and use for downstream steps like PCA and scaling. (Default: 2000)
-- --normalization_method {LogNormalize,RC,CLR} Specifies the normalization method to apply. LogNormalize: Log-normalization by total library size. RC: Relative counts (counts divided by total counts). CLR: Centered log-ratio transformation. - (Default: CLR)
-- --scaling_method {negbinom,linear} Specifies the statistical model used when scaling data. 'negbinom' is recommended for UMI data to better account for variance. (Default: negbinom)
-- --pca_dimensions INTEGER The number of principal components to compute and retain for downstream analysis (e.g., FindNeighbors, RunUMAP). (Default: 15)
-- --clustering_resolution DOUBLE A parameter influencing the granularity of clustering. Higher values typically result in more clusters. Experimentation is often needed to find an appropriate value for your dataset. (Default: 0.5)
-- --clustering_algorithm {louvain,multilevel,leiden,slm} The algorithm used for graph-based clustering. louvain / multilevel: Standard Louvain algorithm. leiden: Leiden algorithm, generally recommended for larger datasets as it tends to produce more connected partitions. slm: SLM (Sequential Louvain Method). (Default: leiden)
-- --working_dir CHARACTER The absolute or relative path to the directory where all output files will be saved. It is highly recommended to specify a dedicated directory for each run or sample. (Default: . - the current directory)
-- --find_markers LOGICAL A boolean flag (TRUE or FALSE) to determine whether to run the FindAllMarkers step to identify genes differentially expressed in each cluster. Finding markers can be computationally intensive. (Default: TRUE)
+#### Available Parameters
 
+**Input Options**:
+- `--rds_input`: Path to Seurat RDS file
+- `--h5_input`: Path to H5 data file (10X Genomics)
+- `--project_name`: Project name (default: SeuratProject)
+- `--working_dir`: Working directory (default: current directory)
+- `--soupor_cell_doublet_input`: SouporCell output for doublet detection
 
-## Example Commands
-1. Running with a raw H5 file using default QC thresholds and all other default parameters:
+**Quality Control**:
+- `--min_features`: Minimum features per cell (default: 200)
+- `--min_counts`: Minimum counts per cell (default: 1000)
+- `--max_features`: Maximum features per cell (default: 6000)
+- `--max_counts`: Maximum counts per cell (default: 25000)
+- `--max_mt_percent`: Maximum mitochondrial percentage (default: 20.0)
+- `--min_cells`: Minimum cells per gene (default: 3)
+
+**Processing**:
+- `--n_variable_features`: Number of variable features (default: 2000)
+- `--normalization_method`: Normalization method (LogNormalize|RC|CLR, default: CLR)
+- `--scaling_method`: Scaling method (negbinom|linear, default: negbinom)
+- `--pca_dimensions`: PCA dimensions (default: 15)
+- `--scale_factor`: Scale factor (default: 10000)
+
+**Clustering**:
+- `--clustering_resolution`: Clustering resolution (default: 0.5)
+- `--clustering_algorithm`: Algorithm (louvain|multilevel|leiden|slm, default: leiden)
+- `--min_cluster_size`: Minimum cluster size (default: 10)
+- `--umap_n_neighbors`: UMAP neighbors (default: 30)
+- `--umap_min_dist`: UMAP minimum distance (default: 0.3)
+
+### Multi-Sample Analysis
+
+The pipeline now supports processing multiple samples simultaneously with parallel processing and sample-specific configurations.
+
+#### Web Interface - Multi-Sample
+
+1. **Data Input**: Upload multiple H5 or RDS files
+2. **Parallel Processing**: Enable parallel processing and set number of cores
+3. **Sample Configurations**: Optionally upload sample-specific configuration file
+4. **Run Analysis**: Execute the pipeline for all samples
+5. **View Results**: Explore individual sample results and comparisons
+
+#### Command Line - Multi-Sample
 
 ```bash
+# Run multiple RDS files
+Rscript scripts/run_multi_sample_pipeline.R \
+  --rds_inputs data/sample1.rds data/sample2.rds data/sample3.rds \
+  --project_name MultiSampleProject \
+  --parallel \
+  --n_cores 4
 
-./seurat_pipeline.R --h5_input /path/to/your/filtered_feature_bc_matrix.h5 --project_name MyProject
+# Run multiple H5 files with sample configurations
+Rscript scripts/run_multi_sample_pipeline.R \
+  --h5_inputs data/sample1.h5 data/sample2.h5 \
+  --project_name MultiSampleProject \
+  --sample_configs config/sample_configs.yaml \
+  --parallel \
+  --n_cores 2
+
+# Run with SouporCell doublet detection
+Rscript scripts/run_multi_sample_pipeline.R \
+  --rds_inputs data/sample1.rds data/sample2.rds \
+  --soupor_cell_doublet_inputs data/soupor1.tsv data/soupor2.tsv \
+  --project_name MultiSampleProject \
+  --parallel
 ```
 
-2. Running with a raw H5 file, specifying custom QC thresholds and a dedicated working directory:
+#### Sample-Specific Configuration
+
+Create a YAML file to customize parameters for individual samples:
+
+```yaml
+samples:
+  sample1:
+    qc:
+      min_features: 300
+      max_mt_percent: 15
+    clustering:
+      resolution: 0.8
+      algorithm: "louvain"
+  
+  sample2:
+    qc:
+      min_counts: 1500
+    processing:
+      n_variable_features: 2500
+    clustering:
+      resolution: 0.3
+```
+
+#### Multi-Sample Parameters
+
+**Input Options**:
+- `--rds_inputs`: Paths to multiple Seurat RDS files
+- `--h5_inputs`: Paths to multiple H5 data files
+- `--soupor_cell_doublet_inputs`: Paths to multiple SouporCell output files
+- `--sample_configs`: Path to sample-specific configuration file
+
+**Parallel Processing**:
+- `--parallel`: Enable parallel processing (default: TRUE)
+- `--n_cores`: Number of cores to use (default: auto-detect)
+
+#### Output Structure
+
+Multi-sample analysis creates an organized output structure:
+
+```
+ProjectName_outputs/
+├── individual_samples/
+│   ├── sample1/
+│   │   ├── sample1_processed.rds
+│   │   ├── sample1_UMAP.png
+│   │   └── ...
+│   ├── sample2/
+│   │   ├── sample2_processed.rds
+│   │   ├── sample2_UMAP.png
+│   │   └── ...
+│   └── ...
+├── comparisons/
+│   ├── ProjectName_cell_counts_comparison.png
+│   ├── ProjectName_gene_counts_comparison.png
+│   └── ProjectName_cluster_counts_comparison.png
+├── combined_analysis/
+├── reports/
+└── ProjectName_multi_sample_summary.csv
+```
+
+**Analysis**:
+- `--find_markers`: Find cluster markers
+- `--save_intermediate`: Save intermediate results
+- `--random_seed`: Random seed (default: 42)
+- `--verbose`: Enable verbose output
+- `--output_format`: Plot format (png|pdf|svg, default: png)
+
+## Server Deployment
+
+### Docker Deployment
+
+The pipeline is containerized for easy deployment on any server:
 
 ```bash
+# Build and start
+docker-compose up -d
 
-./seurat_pipeline.R --h5_input /path/to/your/filtered_feature_bc_matrix.h5 --project_name MyProject --min_features 300 --min_counts 1500 --working_dir /path/to/output/directory
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-3. Running with a Seurat RDS file and disabling marker finding:
+### Production Deployment
+
+For production servers, use the production profile:
 
 ```bash
+# Deploy with NGINX reverse proxy
+docker-compose --profile production up -d
 
-./seurat_pipeline.R --rds_input /path/to/your/seurat_object.rds --project_name ProcessedData --find_markers FALSE --working_dir /path/to/output/directory
+# Configure SSL certificates in nginx.conf
+# Update domain name in nginx.conf
 ```
 
-4. Run multiple samples in one run:
+### Manual Server Setup
+
+1. **Install dependencies**:
+   ```bash
+   sudo apt update
+   sudo apt install r-base r-base-dev
+   sudo apt install gdebi-core
+   wget https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
+   sudo gdebi shiny-server-1.5.20.1002-amd64.deb
+   ```
+
+2. **Configure Shiny Server**:
+   ```bash
+   sudo cp shiny_app /srv/shiny-server/snrna-pipeline
+   sudo systemctl restart shiny-server
+   ```
+
+3. **Set up reverse proxy** (optional):
+   ```bash
+   sudo apt install nginx
+   sudo cp nginx.conf /etc/nginx/sites-available/snrna-pipeline
+   sudo ln -s /etc/nginx/sites-available/snrna-pipeline /etc/nginx/sites-enabled/
+   sudo systemctl restart nginx
+   ```
+
+## Configuration
+
+### Environment Variables
+
+- `SHINY_HOST`: Host address (default: 0.0.0.0)
+- `SHINY_PORT`: Port number (default: 3838)
+- `R_MAX_MEM_SIZE`: Maximum R memory (default: 8G)
+
+### Configuration Files
+
+- `config/settings.yaml`: Pipeline configuration
+- `nginx.conf`: NGINX reverse proxy configuration
+- `docker-compose.yml`: Docker services configuration
+
+## Output Structure
+
+```
+results/
+├── MyProject/
+│   ├── qc/
+│   │   ├── qc_plots.pdf
+│   │   └── qc_summary.txt
+│   ├── processing/
+│   │   ├── variable_features.pdf
+│   │   └── pca_plots.pdf
+│   ├── clustering/
+│   │   ├── umap_clusters.pdf
+│   │   └── cluster_markers.csv
+│   ├── visualizations/
+│   │   ├── feature_plots.pdf
+│   │   └── heatmaps.pdf
+│   └── MyProject_processed.rds
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Port already in use**:
+   ```bash
+   SHINY_PORT=8080 ./launch.sh deploy
+   ```
+
+2. **Memory issues**:
+   ```bash
+   export R_MAX_MEM_SIZE=16G
+   ./launch.sh deploy
+   ```
+
+3. **Permission errors**:
+   ```bash
+   sudo chown -R $USER:$USER .
+   chmod +x launch.sh
+   ```
+
+4. **Docker issues**:
+   ```bash
+   ./scripts/deployment/deploy.sh clean
+   ./launch.sh deploy
+   ```
+
+### Logs and Debugging
+
 ```bash
-#!/bin/bash
+# View application logs
+./scripts/deployment/deploy.sh logs
 
-# Define the commands for each sample
-commands=(
-  "./seurat_pipeline.R --h5_input /path/to/sample1/h5 --soupor_cell_doublet_input /path/to/sample1/doublets.tsv --working_dir /path/to/output/sample1 --project_name Sample1 --find_markers FALSE"
-  "./seurat_pipeline.R --h5_input /path/to/sample2/h5 --soupor_cell_doublet_input /path/to/sample2/doublets.tsv --working_dir /path/to/output/sample2 --project_name Sample2 --find_markers FALSE"
-  "./seurat_pipeline.R --h5_input /path/to/sample3/h5 --soupor_cell_doublet_input /path/to/sample3/doublets.tsv --working_dir /path/to/output/sample3 --project_name Sample3 --find_markers FALSE"
-  # Add commands for other samples
-)
+# Check service status
+./scripts/deployment/deploy.sh status
 
-# Determine the number of parallel jobs (e.g., number of CPU cores)
-num_jobs=$(nproc) # Or specify a number, e.g., num_jobs=8
-echo "Running ${#commands[@]} commands using <span class="math-inline">num\_jobs parallel jobs\.\.\."
-\# Execute the commands in parallel
-printf "%s\\n" "</span>{commands[@]}" | parallel -j "$num_jobs"
-
-echo "All parallel pipeline runs have finished."
+# View Docker logs
+docker-compose logs -f snrna-pipeline
 ```
 
-## Pipeline Overview
+## Development
 
-### 1. Data Loading
-- Load raw 10X data (`Read10X_h5`) or existing Seurat RDS (`readRDS`).
-- Create Seurat object if starting from raw data.
+### Local Development
 
-### 2. Quality Control (QC)
-- Compute mitochondrial percentage (`PercentageFeatureSet`).
-- Filter cells by features/count thresholds.
-- Optional doublet removal via SouporCell.
-- Generate QC plots (Violin, FeatureScatter, Histograms).
+1. **Clone and setup**:
+   ```bash
+   git clone <repository-url>
+   cd snRNA-seq-Pipeline
+   Rscript setup/install_dependencies.R
+   ```
 
-### 3. Normalization & Scaling
-- Normalize data (`NormalizeData`).
-- Identify variable features (`FindVariableFeatures`).
-- Scale data (`ScaleData`) using linear or negative binomial methods.
+2. **Run in development mode**:
+   ```bash
+   ./launch.sh shiny
+   ```
 
-### 4. Dimensionality Reduction & Clustering
-- Run PCA (`RunPCA`), plot results, and generate elbow plots.
-- Construct cell-cell nearest neighbor graphs (`FindNeighbors`).
-- Cluster cells (`FindClusters`) using chosen algorithm (e.g., Leiden).
-- Visualize clusters with UMAP (`RunUMAP`).
+3. **Test terminal interface**:
+   ```bash
+   ./launch.sh terminal
+   ```
 
-### 5. Optional Marker Detection
-- Find differentially expressed genes per cluster (`FindAllMarkers`).
-- Default test: Wilcoxon; optionally use DESeq2 (suited for larger clusters).
+### Contributing
 
-### Final Output
-- QC, PCA, UMAP plots, marker gene CSV.
-- Processed Seurat object saved as `.rds`.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-For detailed function documentation, see [Seurat v5 Docs](https://satijalab.org/seurat/).
+## License
 
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Output Files
-All output files are saved in the directory specified by the --working_dir argument. The filenames are prefixed with the --project_name.
+## Support
 
-- [project_name]_QC_VlnPlots_PreFilter_Combined.png: Static combined VlnPlots showing distributions of nFeature_RNA, nCount_RNA, and percent.mt before any filtering. Includes summary statistics in subtitles.
-[put name of QC_VlnPlots_PreFilter_Combined.png image here]
+For issues and questions:
+1. Check the troubleshooting section
+2. Review the logs using `./scripts/deployment/deploy.sh logs`
+3. Open an issue on the repository
+4. Contact the development team
 
-- [project_name]_QC_FeatureScatter_PreFilter_Combined.png: Static combined FeatureScatter plots showing nCount_RNA vs nFeature_RNA and nCount_RNA vs percent.mt before filtering, with log10 scale on the x-axis.
-[put name of QC_FeatureScatter_PreFilter_Combined.png image here]
+## Citation
 
-- [project_name]_QC_UMI_Histogram_PreFilter.png: Static histogram showing the distribution of UMI counts per cell before filtering. Includes summary statistics in the subtitle.
-[put name of QC_UMI_Histogram_PreFilter.png image here]
+If you use this pipeline in your research, please cite:
 
-- [project_name]_QC_VlnPlots_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined VlnPlots showing distributions after filtering. Includes summary statistics and filter information in subtitles.
-[put name of QC_VlnPlots_PostFilter_Combined.png image here]
-
-- [project_name]_QC_FeatureScatter_PostFilter_Combined.png: (Generated only if H5 input was used and cells remain after filtering) Static combined FeatureScatter plots after filtering, with log10 scale on the x-axis and filter information in subtitles.
-[put name of QC_FeatureScatter_PostFilter_Combined.png image here]
-
-- [project_name]_QC_UMI_Histogram_PostFilter.png: (Generated only if H5 input was used and cells remain after filtering) Static histogram showing the distribution of UMI counts per cell after filtering. Includes summary statistics and filter information in the subtitle.
-[put name of QC_UMI_Histogram_PostFilter.png image here]
-
-- [project_name]_QC_cells_summary.png: Bar plot visualizing the total number of cells before and after all filtering steps (SouporCell and/or min_features/counts if applicable).
-[put name of QC_cells_summary.png image here]
-
-- [project_name]_QC_reads_summary.png: Bar plot visualizing the total number of reads (UMI counts) before and after all filtering steps.
-[put name of QC_reads_summary.png image here]
-
-- [project_name]_Variable_Features.html: An interactive HTML plot of the identified highly variable features. You can open this file in a web browser to hover over points and see the gene names.
-[put name of Variable_Features.html preview image here]
-
-- [project_name]_PCA.1.png: Combined static plot showing the PCA cell embedding colored by cluster and an Elbow plot to assess PC significance.
-[put name of PCA.1.png image here]
-
-- [project_name]_PCA.2.png: Static heatmap showing the expression of the top genes contributing to the first few principal components.
-[put name of PCA.2.png image here]
-
-- [project_name]_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the cell-cell nearest neighbor graph constructed by FindNeighbors().
-
-- [project_name]_shared_nearest_neighbors_graph.rds: An R Data Serialization (RDS) file containing the igraph object representing the Shared Nearest Neighbor (SNN) graph.
-
-- [project_name]_UMAP.png: Static UMAP plot visualizing the cell embedding in 2D, colored and labeled by the identified clusters.
-[put name of UMAP.png image here]
-
-- [project_name]_markers_res[resolution]_alg[algorithm].csv: (Generated only if --find_markers TRUE) A CSV file containing the table of differentially expressed genes for each cluster. The filename includes the clustering resolution and algorithm used.
-[put name of markers.csv preview image here]
-
-- [project_name]_processed.rds: The final processed Seurat object, saved as an RDS file. This object contains all the data and analysis results and can be loaded into R or RStudio for further interactive exploration.
-
-### Doublet Filtering (SouporCell)
-Use `--soupor_cell_doublet_input` to filter doublets identified by [SouporCell](https://github.com/wheaton5/souporcell). Retains cells labeled as 'singlet' or 'unclassified' and removes explicit 'doublets'.
-
-### Optional Marker Finding
-Activate differential expression analysis with `--find_markers TRUE`. Default is DESeq2 test.
-
-
-### Working Directory
-It is strongly recommended to use the --working_dir argument to specify a dedicated output directory for each sample or analysis run. This helps keep your project files organized and prevents output files from different runs from overwriting each other. The script will create the directory if it doesn't exist. Ensure the user running the script has write permissions to this directory.
-
-## Tips and Best Practices
-##### Choosing QC Thresholds: 
-The default --min_features (200) and --min_counts (1000) are common starting points, but these should be adjusted based on the specific distribution of your data visible in the pre-filter QC plots and your knowledge of the expected cell quality. Look for inflection points in the cumulative distribution of counts and features.
-#### Selecting PCA Dimensions: 
-The --pca_dimensions argument is crucial for capturing the major sources of variation while reducing noise. The Elbow plot ([project_name]_PCA.1.png) can help you decide how many PCs to include. Look for an "elbow" point where the variance explained by subsequent PCs drops significantly. You can also consider using JackStraw analysis interactively in R/RStudio after the script runs to determine statistically significant PCs.
-#### Choosing Clustering Resolution: 
-The --clustering_resolution parameter directly impacts the number and granularity of the resulting clusters. Higher values lead to more clusters. Experiment with different resolutions to find a level of clustering that aligns with your biological questions and expected cell populations.
-#### Interpreting Plots: 
-Use the generated plots to assess the quality of your data and the results of each analysis step. The QC plots help you understand the initial data quality and the impact of filtering. The PCA, UMAP, and Variable Feature plots help you assess the dimensionality reduction and feature selection. The UMAP plot with clusters is the primary visualization for cell type identification.
-#### Resource Management (Parallel Runs): 
-When running the parallel Bash script for multiple samples, carefully consider the number of --pca_dimensions and whether --find_markers is enabled, as these steps can be computationally and memory intensive. Adjust the num_jobs parameter in your Bash script based on the available CPU cores and memory on your system to avoid overloading it.
-#### Interactive Exploration: 
-The final [project_name]_processed.rds Seurat object is your primary resource for further interactive analysis in R or RStudio. You can load this object to perform manual cluster annotation, visualize specific gene expression, run additional analyses, etc.
-
-### Troubleshooting
-##### Missing Packages: 
-If the script fails with a missing package error, ensure your internet connection is active and R can access CRAN to install them. If behind a firewall, you might need to configure R's proxy settings.
-##### File Not Found: 
-Double-check the paths provided for --rds_input, --h5_input, and --soupor_cell_doublet_input. Ensure the files exist at those exact locations and that the user running the script has read permissions.
-##### Seurat Function Errors: 
-Errors during Seurat function calls (like NormalizeData, RunPCA, FindClusters) might indicate issues with the data itself (e.g., no cells remaining after filtering, all values being zero). Check the logging messages for specific error details and review the QC plots and summary statistics to understand the state of the data before the failing step.
-##### Memory Errors: 
-If the script runs out of memory, especially during scaling, PCA, or marker finding on large datasets, consider reducing the number of variable features (--n_variable_features), the number of PCA dimensions (--pca_dimensions), or processing samples individually rather than in parallel (or reduce the number of parallel jobs).
-
-## Author: Vibhav Setlur
-## Date: 2025-04-20
+```
+snRNA-seq Pipeline v1.0
+Single-nucleus RNA sequencing analysis pipeline
+https://github.com/your-repo/snRNA-seq-Pipeline
+```

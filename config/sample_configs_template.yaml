@@ -1,0 +1,149 @@
+# Sample-Specific Configuration Template for Multi-Sample snRNA-seq Pipeline
+# 
+# This file allows you to override default parameters for specific samples.
+# Copy this template and customize it for your project.
+#
+# Usage:
+# 1. Copy this file to your project directory
+# 2. Rename it to something like "my_project_sample_configs.yaml"
+# 3. Customize the parameters for each sample
+# 4. Upload it in the Shiny app or specify it with --sample_configs in command line
+#
+# Sample names should match the filenames (without extension) of your input files.
+# For example, if you have "Control_1.h5", the sample name would be "Control_1"
+
+samples:
+  # Example sample 1 - Control sample with standard parameters
+  Control_1:
+    qc:
+      min_features: 200
+      min_counts: 1000
+      max_features: 6000
+      max_counts: 25000
+      max_mt_percent: 20
+      min_cells: 3
+    processing:
+      n_variable_features: 2000
+      normalization_method: "CLR"
+      scaling_method: "negbinom"
+      pca_dimensions: 15
+      scale_factor: 10000
+    clustering:
+      resolution: 0.5
+      algorithm: "leiden"
+      min_cluster_size: 10
+    umap:
+      n_neighbors: 30
+      min_dist: 0.3
+    differential_expression:
+      find_markers: true
+      min_pct: 0.1
+      logfc_threshold: 0.25
+    visualization:
+      theme: "classic"
+      color_palette: "viridis"
+      point_size: 0.5
+      label_size: 2
+
+  # Example sample 2 - Treatment sample with different QC thresholds
+  Treatment_1:
+    qc:
+      min_features: 300  # Higher threshold for this sample
+      min_counts: 1500   # Higher threshold for this sample
+      max_features: 6000
+      max_counts: 25000
+      max_mt_percent: 15  # Lower mitochondrial threshold
+      min_cells: 3
+    processing:
+      n_variable_features: 2500  # More variable features
+      normalization_method: "CLR"
+      scaling_method: "negbinom"
+      pca_dimensions: 20  # More PCA dimensions
+      scale_factor: 10000
+    clustering:
+      resolution: 0.6  # Higher resolution for more clusters
+      algorithm: "leiden"
+      min_cluster_size: 10
+    umap:
+      n_neighbors: 30
+      min_dist: 0.3
+    differential_expression:
+      find_markers: true
+      min_pct: 0.1
+      logfc_threshold: 0.25
+    visualization:
+      theme: "classic"
+      color_palette: "viridis"
+      point_size: 0.5
+      label_size: 2
+
+  # Example sample 3 - Another treatment sample with different parameters
+  Treatment_2:
+    qc:
+      min_features: 250
+      min_counts: 1200
+      max_features: 7000  # Higher max features
+      max_counts: 30000  # Higher max counts
+      max_mt_percent: 18
+      min_cells: 3
+    processing:
+      n_variable_features: 2000
+      normalization_method: "LogNormalize"  # Different normalization
+      scaling_method: "linear"  # Different scaling
+      pca_dimensions: 15
+      scale_factor: 10000
+    clustering:
+      resolution: 0.4  # Lower resolution for fewer clusters
+      algorithm: "louvain"  # Different algorithm
+      min_cluster_size: 15  # Larger minimum cluster size
+    umap:
+      n_neighbors: 25  # Fewer neighbors
+      min_dist: 0.4  # Higher min_dist
+    differential_expression:
+      find_markers: true
+      min_pct: 0.15  # Higher minimum percentage
+      logfc_threshold: 0.3  # Higher log fold change threshold
+    visualization:
+      theme: "bw"  # Different theme
+      color_palette: "Set1"  # Different color palette
+      point_size: 0.8  # Larger points
+      label_size: 3  # Larger labels
+
+# Global settings that apply to all samples (optional)
+global:
+  # These settings will be used as defaults for any sample not explicitly defined
+  qc:
+    min_features: 200
+    min_counts: 1000
+    max_features: 6000
+    max_counts: 25000
+    max_mt_percent: 20
+    min_cells: 3
+  processing:
+    n_variable_features: 2000
+    normalization_method: "CLR"
+    scaling_method: "negbinom"
+    pca_dimensions: 15
+    scale_factor: 10000
+  clustering:
+    resolution: 0.5
+    algorithm: "leiden"
+    min_cluster_size: 10
+  umap:
+    n_neighbors: 30
+    min_dist: 0.3
+  differential_expression:
+    find_markers: true
+    min_pct: 0.1
+    logfc_threshold: 0.25
+  visualization:
+    theme: "classic"
+    color_palette: "viridis"
+    point_size: 0.5
+    label_size: 2
+
+# Notes:
+# - Only specify the parameters you want to override
+# - Parameters not specified will use the global defaults or pipeline defaults
+# - Sample names must match your input filenames (without extension)
+# - All parameters are optional - the pipeline will use sensible defaults

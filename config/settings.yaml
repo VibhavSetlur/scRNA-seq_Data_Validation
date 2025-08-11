@@ -1,0 +1,81 @@
+# snRNA-seq Pipeline Configuration File
+# This file contains default parameters for the pipeline
+# Users can modify these values to customize their analysis
+
+# Project Settings
+project:
+  default_name: "SeuratProject"
+  output_format: "png"  # png, pdf, svg
+  dpi: 300
+  save_intermediate: true
+
+# Quality Control Parameters
+qc:
+  min_features: 200
+  min_counts: 1000
+  max_features: 6000  # Maximum features per cell
+  max_counts: 25000   # Maximum counts per cell
+  max_mt_percent: 20  # Maximum mitochondrial percentage
+  min_cells: 3        # Minimum cells expressing a gene
+
+# Data Processing
+processing:
+  normalization_method: "CLR"  # LogNormalize, RC, CLR
+  n_variable_features: 2000
+  scaling_method: "negbinom"   # negbinom, linear
+  pca_dimensions: 15
+  scale_factor: 10000
+
+# Clustering Parameters
+clustering:
+  resolution: 0.5
+  algorithm: "leiden"  # louvain, multilevel, leiden, slm
+  min_cluster_size: 10
+  random_seed: 42
+
+# UMAP Parameters
+umap:
+  n_neighbors: 30
+  min_dist: 0.3
+  spread: 1.0
+  random_seed: 42
+
+# Differential Expression
+differential_expression:
+  find_markers: true
+  test_use: "DESeq2"  # DESeq2, wilcox, negbinom
+  logfc_threshold: 0.25
+  min_pct: 0.1
+  return_thresh: 0.05
+  only_pos: false
+
+# Visualization Settings
+visualization:
+  theme: "classic"  # classic, minimal, bw
+  color_palette: "viridis"  # viridis, rainbow, brewer
+  point_size: 0.7
+  label_size: 3
+  title_size: 14
+  subtitle_size: 10
+
+# Performance Settings
+performance:
+  parallel_processing: true
+  n_cores: "auto"  # auto or specific number
+  memory_limit: "8GB"
+  chunk_size: 1000
+
+# File Paths
+paths:
+  working_directory: "."
+  output_directory: "outputs"
+  log_directory: "logs"
+  temp_directory: "temp"
+
+# Advanced Settings
+advanced:
+  verbose: true
+  save_logs: true
+  check_memory: true
+  validate_inputs: true
+  backup_results: true

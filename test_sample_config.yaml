@@ -1,0 +1,12 @@
+# Test sample configuration
+samples:
+  test_data:
+    qc:
+      min_features: 150
+      min_counts: 800
+      max_mt_percent: 25
+    processing:
+      n_variable_features: 1500
+    clustering:
+      resolution: 0.4
+      algorithm: "leiden"

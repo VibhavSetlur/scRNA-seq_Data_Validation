@@ -138,7 +138,7 @@ if (!is.null(args$rds_input) && file.exists(args$rds_input)) {
 } else if (!is.null(args$h5_input) && file.exists(args$h5_input)) {
   
   cat('Loading raw data from:', args$h5_input, '\n')
-  h5_data = Read10X_h5(filename = args$h5_input)
+      h5_data = Read10X_h5(file = args$h5_input)
   seurat_object = CreateSeuratObject(counts = h5_data,
                                      project = args$project_name)
   input_type = 'h5'

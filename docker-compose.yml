@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  snrna-pipeline:
+    build: .
+    container_name: snrna-pipeline
+    ports:
+      - "3838:3838"
+    environment:
+      - SHINY_HOST=0.0.0.0
+      - SHINY_PORT=3838
+      - R_MAX_MEM_SIZE=8G
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./temp:/app/temp
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3838"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a reverse proxy with NGINX for production deployment
+  nginx:
+    image: nginx:alpine
+    container_name: snrna-pipeline-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - snrna-pipeline
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  data:
+  results:
+  logs:
+  temp:

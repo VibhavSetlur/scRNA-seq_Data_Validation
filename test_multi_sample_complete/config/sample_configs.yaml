@@ -1,0 +1,41 @@
+# Sample-specific configuration for testing
+samples:
+  Control_1:
+    qc:
+      min_features: 200
+      min_counts: 800
+      max_mt_percent: 18
+    clustering:
+      resolution: 0.4
+      algorithm: "leiden"
+  
+  Control_2:
+    qc:
+      min_features: 250
+      min_counts: 1000
+      max_mt_percent: 20
+    clustering:
+      resolution: 0.5
+      algorithm: "louvain"
+  
+  Treatment_1:
+    qc:
+      min_features: 180
+      min_counts: 900
+      max_mt_percent: 22
+    processing:
+      n_variable_features: 2500
+    clustering:
+      resolution: 0.6
+      algorithm: "leiden"
+  
+  Treatment_2:
+    qc:
+      min_features: 220
+      min_counts: 1100
+      max_mt_percent: 25
+    processing:
+      n_variable_features: 2800
+    clustering:
+      resolution: 0.7
+      algorithm: "louvain"

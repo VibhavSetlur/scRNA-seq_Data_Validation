@@ -1,0 +1,220 @@
+# R specific files
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+.Rprofile
+.Renviron
+
+# R package files
+*.Rcheck/
+*.tar.gz
+*.tgz
+*.zip
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+*.out
+
+# Data files
+*.h5
+*.hdf5
+*.rds
+*.csv
+*.tsv
+data/
+results/
+outputs/
+
+# Test data
+tests/data/
+tests/results/
+
+# Cache files
+temp/
+cache/
+*.cache
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Large files
+*.fastq
+*.fastq.gz
+*.bam
+*.bai
+*.sam
+*.vcf
+*.vcf.gz
+
+# Shiny app specific
+shiny_app/www/uploads/
+shiny_app/www/downloads/
+
+# Documentation builds
+docs/_build/
+docs/site/
+
+# Environment files
+.env
+.renv/
+renv.lock
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Python files (if any)
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+# Node.js files (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker files (keep these for deployment)
+# Dockerfile
+# docker-compose.yml
+# .dockerignore
+
+# Configuration files with sensitive data
+config/local_settings.yaml
+config/secrets.yaml
+
+# Session files
+*.Rsession
+
+# Package installation logs
+install_logs/
+
+# Memory dumps
+*.Rdump
+
+# Profiling files
+*.prof
+*.prof.out
+
+# Coverage files
+*.cov
+coverage/
+
+# Test coverage
+*.gcov
+*.gcda
+*.gcno
+
+# Parallel processing files
+*.parallel
+*.job
+
+# Lock files
+*.lock
+
+# Archive files
+*.tar
+*.gz
+*.bz2
+*.xz
+*.7z
+
+# Large binary files
+*.bin
+*.dat
+*.raw
+
+# Network files
+*.netrc
+*.curlrc
+
+# SSH keys
+*.pem
+*.key
+*.pub
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Compiled files
+*.o
+*.so
+*.dll
+*.dylib
+
+# Executable files
+*.exe
+*.app
+
+# Font files
+*.ttf
+*.otf
+*.woff
+*.woff2
+
+# Image files (keep only essential ones)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.eps
+*.tiff
+*.bmp
+
+# Audio/Video files
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.wav
+*.flac
+
+# Archive and compression
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+
+# Temporary directories
+tmp/
+temp/
+scratch/
