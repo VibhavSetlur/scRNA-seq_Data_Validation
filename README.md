@@ -6,7 +6,7 @@ A comprehensive single-nucleus RNA sequencing analysis pipeline designed for com
 
 ```bash
 # Clone and setup
-git clone <repository-url>
+git clone https://github.com/VibhavSetlur/scRNA-seq_Data_Validation
 cd snRNA-seq-Pipeline
 ./launch.sh setup
 
@@ -200,7 +200,7 @@ If you use this pipeline in your research, please cite:
 ```
 snRNA-seq Pipeline v1.0
 Single-nucleus RNA sequencing analysis pipeline
-https://github.com/VibhavSetlur/snRNA-seq-Pipeline
+https://github.com/VibhavSetlur/scRNA-seq_Data_Validation
 ```
 
 ## Support
