@@ -1,116 +1,218 @@
-# snRNA-seq Analysis Pipeline
+# snRNA-seq Pipeline
 
-A comprehensive single-nucleus RNA sequencing analysis pipeline designed for computational biology research. Built with Seurat and R, this tool provides both interactive web-based analysis and command-line processing for flexible research workflows.
+A comprehensive single-nucleus RNA sequencing analysis pipeline designed for computational biologists and researchers. Built with Seurat, this tool provides both interactive web-based analysis and high-throughput command-line processing for multi-sample studies.
 
-## Overview
-
-This pipeline enables researchers to perform end-to-end single-nucleus RNA-seq analysis, from raw data processing to advanced clustering and marker identification. It supports both individual sample analysis and multi-sample comparative studies with parallel processing capabilities.
-
-## Key Features
-
-- **Multi-Sample Analysis**: Process multiple samples simultaneously with sample-specific parameter optimization
-- **Flexible Input Formats**: Support for 10X Genomics H5 files and Seurat RDS objects
-- **Quality Control**: Comprehensive filtering with customizable thresholds for mitochondrial content, feature counts, and cell quality
-- **Advanced Clustering**: Multiple clustering algorithms (Louvain, Leiden, SLM) with resolution optimization
-- **Marker Identification**: Automated differential expression analysis for cluster characterization
-- **Interactive Visualization**: Web-based Shiny interface for exploratory data analysis
-- **Batch Processing**: Command-line interface for high-throughput analysis
-- **Reproducible Workflows**: Containerized deployment with version-controlled environments
-
-## Quick Start
-
-### Installation
+## 🚀 Quick Start
 
 ```bash
-# Clone repository
+# Clone and setup
 git clone <repository-url>
 cd snRNA-seq-Pipeline
-
-# Setup environment
 ./launch.sh setup
-```
 
-### Basic Usage
-
-**Web Interface (Recommended for exploration):**
-```bash
+# Launch web interface
 ./launch.sh shiny
 ```
 
-**Command Line (Recommended for batch processing):**
+**Access**: http://localhost:3838
+
+## 📋 Overview
+
+This pipeline streamlines single-nucleus RNA-seq analysis with:
+
+- **Multi-sample processing** with parallel computing
+- **Sample-specific configurations** for customized analysis
+- **Interactive web interface** for exploratory analysis
+- **Command-line tools** for batch processing
+- **Comprehensive QC** and visualization
+- **Publication-ready outputs**
+
+## 🧬 Analysis Workflow
+
+1. **Data Input**: H5 files (10X Genomics) or RDS files (Seurat objects)
+2. **Quality Control**: Filtering based on features, counts, and mitochondrial content
+3. **Processing**: Normalization, variable feature selection, scaling
+4. **Dimensionality Reduction**: PCA and UMAP
+5. **Clustering**: Multiple algorithms (Leiden, Louvain, etc.)
+6. **Marker Identification**: Differential expression analysis
+7. **Visualization**: Automated plot generation
+
+## 📁 Input Data
+
+### Supported Formats
+- **H5 files**: 10X Genomics Cell Ranger output
+- **RDS files**: Pre-processed Seurat objects
+- **Multiple samples**: Parallel processing with sample-specific parameters
+
+### Data Requirements
+- Single-nucleus RNA-seq count matrices
+- Gene expression data with cell barcodes
+- Optional: SouporCell output for doublet detection
+
+## 🎯 Key Features
+
+### Multi-Sample Analysis
+Process multiple samples simultaneously with:
+- Parallel computing for efficiency
+- Sample-specific parameter customization
+- Automated sample comparisons
+- Integrated results visualization
+
+### Quality Control
+Comprehensive filtering options:
+- Feature count thresholds
+- UMI count filtering
+- Mitochondrial content filtering
+- Cell and gene quality metrics
+
+### Advanced Analysis
+- Multiple clustering algorithms
+- Differential expression analysis
+- Dimensionality reduction
+- Marker gene identification
+
+## 🖥️ Usage Options
+
+### Web Interface (Recommended for Exploration)
 ```bash
-# Single sample analysis
+./launch.sh shiny
+```
+- Interactive parameter adjustment
+- Real-time visualization
+- Sample preview and validation
+- Progress monitoring
+
+### Command Line (Recommended for Batch Processing)
+```bash
+# Single sample
 Rscript scripts/run_pipeline_terminal.R \
   --h5_input data/sample.h5 \
   --project_name MyProject
 
-# Multi-sample analysis
+# Multiple samples
 Rscript scripts/run_multi_sample_pipeline.R \
   --h5_inputs data/sample1.h5 data/sample2.h5 \
-  --project_name MultiSampleProject \
-  --parallel
+  --project_name MultiProject \
+  --parallel \
+  --n_cores 2
 ```
 
-## Input Data Requirements
+### Docker Deployment
+```bash
+./launch.sh deploy
+```
 
-### Supported Formats
-- **10X Genomics H5 files**: Raw count matrices from Cell Ranger output
-- **Seurat RDS objects**: Pre-processed Seurat objects
-- **SouporCell output**: Optional doublet detection results
-
-### Data Quality Recommendations
-- Minimum 200 features per cell
-- Maximum 20% mitochondrial content
-- Minimum 1,000 UMIs per cell
-- Sample size: 1,000-100,000 cells per sample
-
-## Analysis Workflow
-
-1. **Data Loading**: Import H5 or RDS files with automatic format detection
-2. **Quality Control**: Filter cells based on feature counts, UMI counts, and mitochondrial percentage
-3. **Normalization**: Log-normalization or centered log-ratio transformation
-4. **Feature Selection**: Identify highly variable genes
-5. **Dimensionality Reduction**: PCA followed by UMAP/tSNE
-6. **Clustering**: Graph-based clustering with multiple algorithm options
-7. **Marker Analysis**: Differential expression analysis for cluster characterization
-8. **Visualization**: Generate publication-ready plots and summary statistics
-
-## Output Structure
+## 📊 Output Structure
 
 ```
 ProjectName_outputs/
-├── individual_samples/          # Per-sample results
-├── combined_analysis/           # Integrated analysis
-├── comparisons/                 # Cross-sample comparisons
-├── reports/                     # Summary reports
-└── ProjectName_session_info.txt # Analysis metadata
+├── individual_samples/
+│   └── sample_name/
+│       ├── QC plots and summaries
+│       ├── Processing results
+│       ├── Clustering analysis
+│       └── Marker gene tables
+├── comparisons/
+│   ├── Sample comparisons
+│   └── Cross-sample analyses
+├── combined_analysis/
+└── reports/
 ```
 
-## Documentation
+## ⚙️ Configuration
 
-- **[User Guide](docs/user_guides/getting_started.md)**: Step-by-step tutorial for first-time users
-- **[Parameter Reference](docs/user_guides/parameters.md)**: Complete parameter documentation
-- **[Advanced Usage](docs/user_guides/advanced_usage.md)**: Multi-sample analysis and custom workflows
-- **[Troubleshooting](docs/user_guides/troubleshooting.md)**: Common issues and solutions
-- **[API Documentation](docs/api/)**: Function reference and examples
+### Sample-Specific Parameters
+Create YAML files to customize analysis for individual samples:
 
-## Citation
+```yaml
+samples:
+  Control_1:
+    qc:
+      min_features: 200
+      max_mt_percent: 20
+    clustering:
+      resolution: 0.5
+      algorithm: "leiden"
+```
+
+See `docs/sample_configuration.md` for detailed examples.
+
+## 🔧 Installation
+
+### System Requirements
+- R 4.0+ with Bioconductor
+- 8GB+ RAM recommended
+- Multi-core CPU for parallel processing
+
+### Quick Setup
+```bash
+./launch.sh setup
+```
+
+### Manual Installation
+See `docs/installation.md` for detailed instructions.
+
+## 📚 Documentation
+
+- **[Installation Guide](docs/installation.md)**: Detailed setup instructions
+- **[User Guide](docs/user_guide.md)**: Step-by-step analysis workflow
+- **[Sample Configuration](docs/sample_configuration.md)**: Customizing parameters
+- **[Advanced Usage](docs/advanced_usage.md)**: Advanced features and options
+- **[Troubleshooting](docs/troubleshooting.md)**: Common issues and solutions
+- **[API Reference](docs/api_reference.md)**: Function documentation
+
+## 🐛 Troubleshooting
+
+### Common Issues
+1. **Memory errors**: Increase `R_MAX_MEM_SIZE`
+2. **Port conflicts**: Use `SHINY_PORT=8080 ./launch.sh shiny`
+3. **Parallel processing**: Reduce `--n_cores` parameter
+
+### Getting Help
+- Check `docs/troubleshooting.md`
+- Review logs: `./scripts/deployment/deploy.sh logs`
+- Open an issue on GitHub
+
+## 📈 Performance
+
+### Recommended Settings
+- **Small datasets** (<10K cells): 2-4 cores
+- **Medium datasets** (10K-100K cells): 4-8 cores  
+- **Large datasets** (>100K cells): 8+ cores, 16GB+ RAM
+
+### Memory Usage
+- ~2GB per 10K cells
+- Scale linearly with dataset size
+- Adjust `R_MAX_MEM_SIZE` as needed
+
+## 🤝 Contributing
+
+We welcome contributions from the research community:
+1. Fork the repository
+2. Create a feature branch
+3. Test thoroughly with your data
+4. Submit a pull request
+
+## 📄 Citation
 
 If you use this pipeline in your research, please cite:
 
 ```
-snRNA-seq Analysis Pipeline v1.0
+snRNA-seq Pipeline v1.0
 Single-nucleus RNA sequencing analysis pipeline
-https://github.com/your-repo/snRNA-seq-Pipeline
+https://github.com/VibhavSetlur/snRNA-seq-Pipeline
 ```
 
-## Support
+## 📞 Support
 
-For questions and issues:
-- Check the [troubleshooting guide](docs/user_guides/troubleshooting.md)
-- Review [example workflows](docs/vignettes/)
-- Open an issue on the repository
+- **Documentation**: Check the `docs/` folder
+- **Issues**: GitHub issue tracker
+- **Questions**: Open a discussion on GitHub
 
-## License
+## 📜 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+**For detailed documentation, examples, and advanced usage, see the `docs/` folder.**
