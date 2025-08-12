@@ -2,7 +2,7 @@
 
 A comprehensive single-nucleus RNA sequencing analysis pipeline designed for computational biologists and researchers. Built with Seurat, this tool provides both interactive web-based analysis and high-throughput command-line processing for multi-sample studies.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Clone and setup
@@ -16,7 +16,7 @@ cd snRNA-seq-Pipeline
 
 **Access**: http://localhost:3838
 
-## 📋 Overview
+## Overview
 
 This pipeline streamlines single-nucleus RNA-seq analysis with:
 
@@ -27,7 +27,7 @@ This pipeline streamlines single-nucleus RNA-seq analysis with:
 - **Comprehensive QC** and visualization
 - **Publication-ready outputs**
 
-## 🧬 Analysis Workflow
+## Analysis Workflow
 
 1. **Data Input**: H5 files (10X Genomics) or RDS files (Seurat objects)
 2. **Quality Control**: Filtering based on features, counts, and mitochondrial content
@@ -37,7 +37,7 @@ This pipeline streamlines single-nucleus RNA-seq analysis with:
 6. **Marker Identification**: Differential expression analysis
 7. **Visualization**: Automated plot generation
 
-## 📁 Input Data
+## Input Data
 
 ### Supported Formats
 - **H5 files**: 10X Genomics Cell Ranger output
@@ -49,7 +49,7 @@ This pipeline streamlines single-nucleus RNA-seq analysis with:
 - Gene expression data with cell barcodes
 - Optional: SouporCell output for doublet detection
 
-## 🎯 Key Features
+## Key Features
 
 ### Multi-Sample Analysis
 Process multiple samples simultaneously with:
@@ -71,7 +71,7 @@ Comprehensive filtering options:
 - Dimensionality reduction
 - Marker gene identification
 
-## 🖥️ Usage Options
+## Usage Options
 
 ### Web Interface (Recommended for Exploration)
 ```bash
@@ -102,7 +102,7 @@ Rscript scripts/run_multi_sample_pipeline.R \
 ./launch.sh deploy
 ```
 
-## 📊 Output Structure
+## Output Structure
 
 ```
 ProjectName_outputs/
@@ -119,7 +119,7 @@ ProjectName_outputs/
 └── reports/
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Sample-Specific Parameters
 Create YAML files to customize analysis for individual samples:
@@ -137,7 +137,7 @@ samples:
 
 See `docs/sample_configuration.md` for detailed examples.
 
-## 🔧 Installation
+## Installation
 
 ### System Requirements
 - R 4.0+ with Bioconductor
@@ -152,7 +152,7 @@ See `docs/sample_configuration.md` for detailed examples.
 ### Manual Installation
 See `docs/installation.md` for detailed instructions.
 
-## 📚 Documentation
+## Documentation
 
 - **[Installation Guide](docs/installation.md)**: Detailed setup instructions
 - **[User Guide](docs/user_guide.md)**: Step-by-step analysis workflow
@@ -161,7 +161,7 @@ See `docs/installation.md` for detailed instructions.
 - **[Troubleshooting](docs/troubleshooting.md)**: Common issues and solutions
 - **[API Reference](docs/api_reference.md)**: Function documentation
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 1. **Memory errors**: Increase `R_MAX_MEM_SIZE`
@@ -173,7 +173,7 @@ See `docs/installation.md` for detailed instructions.
 - Review logs: `./scripts/deployment/deploy.sh logs`
 - Open an issue on GitHub
 
-## 📈 Performance
+## Performance
 
 ### Recommended Settings
 - **Small datasets** (<10K cells): 2-4 cores
@@ -185,7 +185,7 @@ See `docs/installation.md` for detailed instructions.
 - Scale linearly with dataset size
 - Adjust `R_MAX_MEM_SIZE` as needed
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the research community:
 1. Fork the repository
@@ -193,7 +193,7 @@ We welcome contributions from the research community:
 3. Test thoroughly with your data
 4. Submit a pull request
 
-## 📄 Citation
+## Citation
 
 If you use this pipeline in your research, please cite:
 
@@ -203,13 +203,13 @@ Single-nucleus RNA sequencing analysis pipeline
 https://github.com/VibhavSetlur/snRNA-seq-Pipeline
 ```
 
-## 📞 Support
+## Support
 
 - **Documentation**: Check the `docs/` folder
 - **Issues**: GitHub issue tracker
 - **Questions**: Open a discussion on GitHub
 
-## 📜 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
